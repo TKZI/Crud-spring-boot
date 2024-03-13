@@ -1,0 +1,5 @@
+package br.com.criandoapi.projeto.dto;
+
+public class UsuarioDto {
+
+}

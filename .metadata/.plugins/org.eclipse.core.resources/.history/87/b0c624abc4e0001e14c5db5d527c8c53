@@ -1,0 +1,80 @@
+package br.com.criandoapi.projeto.service;
+
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import br.com.criandoapi.projeto.dto.UsuarioDto;
+import br.com.criandoapi.projeto.model.Usuario;
+import br.com.criandoapi.projeto.repository.IUsuario;
+import br.com.criandoapi.projeto.security.Token;
+import br.com.criandoapi.projeto.security.TokenUtil;
+import jakarta.validation.Valid;
+
+@Service
+public class CadastroUsuarioService {
+
+	private IUsuario repository;
+	
+	private PasswordEncoder passwordEnconder;
+	
+	public CadastroUsuarioService(IUsuario repository) {
+		this.repository = repository;
+		this.passwordEnconder = new BCryptPasswordEncoder();
+	}
+	
+	public List<Usuario> listar() {
+		List<Usuario> usuarios = repository.findAll();
+		return usuarios;
+		
+	}
+	
+	public Usuario salvar(Usuario usuario) {
+		String encoder = passwordEnconder.encode(usuario.getSenha());
+		usuario.setSenha(encoder);
+		Usuario usuarioNovo = repository.save(usuario);
+		return usuarioNovo;
+		
+	}
+	
+	public Usuario atualizar(Usuario usuario, Integer usuarioId) {
+		Usuario usuarioAtual = repository.findById(usuarioId).orElseThrow();
+		
+		
+		BeanUtils.copyProperties(usuario, usuarioAtual, "id");
+		String encoder = passwordEnconder.encode(usuarioAtual.getSenha());
+		usuarioAtual.setSenha(encoder);
+		usuarioAtual = repository.save(usuarioAtual);
+		return usuarioAtual;
+		
+	}
+	
+	public void deletar(Integer usuarioId) {
+		repository.deleteById(usuarioId);
+		
+	}
+	
+	public Boolean validarSenha(Usuario usuario) {
+		
+		String senha = repository.findById(usuario.getId()).get().getSenha();
+		
+		Boolean valid = passwordEnconder.matches(usuario.getSenha(), senha);
+		return valid;
+
+	}
+
+	public Token gerarToken(@Valid UsuarioDto usuarioDto) {
+		Usuario user = repository.findByNomeOrEmail(usuarioDto.getNome(), usuarioDto.getEmail());
+		if(user != null) {
+			Boolean valid = passwordEnconder.matches(usuarioDto.getSenha(), user.getSenha());
+			if(valid) {
+				return  new Token(TokenUtil.createToken(user));
+			}
+		}
+		return null;
+	}
+	
+}

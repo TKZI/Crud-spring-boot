@@ -9,14 +9,32 @@
 </head>
 <body>
     <div class="box">
-        <h1>Cadastro</h1>
-        <form action="">
-            <input type="text" class="nome" name="nome" placeholder="Nome">
-            <input type="text" class="email" name="email" placeholder="Email"> 
-            <input type="password" class="senha" name="senha" placeholder="Senha"> 
-            <input type="text" class="tel" name="tel" placeholder="Telefone"> 
-            <button>Cadastrar</button>
+        <h1>Cadastro de Livro</h1>
+        <form id="cadastroLivroForm">
+            <input type="text" id="titulo" name="titulo" placeholder="Título" required>
+            <input type="number" id="anoPublicacao" name="anoPublicacao" placeholder="Ano de Publicação" required>
+            <input type="number" id="autorId" name="autorId" placeholder="ID do Autor" required>
+            <button type="submit">Cadastrar Livro</button>
         </form>
+    </div>
+    
+    <div class="box">
+        <h1>Buscar Livro</h1>
+        <form id="buscarLivroForm">
+            <input type="number" id="buscarLivroId" name="buscarLivroId" placeholder="ID do Livro" required>
+            <button type="submit">Buscar Livro</button>
+        </form>
+        <div id="livroEncontrado">
+            <!-- Resultados da busca aparecerão aqui -->
+        </div>
+    </div>
+
+    <div class="box">
+        <h1>Listagem de Livros</h1>
+        <button id="listarLivrosBtn">Listar Livros</button>
+        <div id="listaLivros">
+            <!-- Listagem de livros aparecerá aqui -->
+        </div>
     </div>
 </body>
 </html>
